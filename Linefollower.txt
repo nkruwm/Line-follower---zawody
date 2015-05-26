@@ -1,0 +1,71 @@
+
+
+if (decyzja=='L' || decyzja=='l') {
+//czujnik swiatla na porcie 3
+while (1)
+{
+int znalazlem=0;
+NXT::Sensor::SetLight(&comm,IN_3, 1) ;
+int natezenie=NXT::Sensor::GetValue(&comm,IN_3);
+Wait(50);
+ 
+cout<< endl << "light: " << natezenie;
+Wait(50);
+ 
+if (natezenie <37) // 37 - granica czarne-biale
+{
+NXT::Motor::SetForward(&comm, OUT_B, x);
+NXT::Motor::SetForward(&comm, OUT_C, x); }
+else
+{
+NXT::Motor::SetForward(&comm, OUT_B, 0);
+NXT::Motor::SetForward(&comm, OUT_C, 0);
+NXT::Motor::Stop(&comm, OUT_B, 0);
+NXT::Motor::Stop(&comm, OUT_C, 0);
+ 
+while(1) 
+{
+ 
+// szukaj w lewo
+NXT::Motor::SetForward(&comm, OUT_B, y);
+NXT::Motor::SetReverse(&comm, OUT_C, y);
+int inny_licznik=0;
+while(1){
+ if ((NXT::Sensor::GetValue(&comm,IN_3) <37)) { inny_licznik=0; znalazlem=1;break;}  // 37 - granica czarne-biale
+Wait(10);
+if (++inny_licznik>20) break;
+}
+ 
+NXT::Motor::SetForward(&comm, OUT_B, 0);
+NXT::Motor::SetForward(&comm, OUT_C, 0);
+NXT::Motor::Stop(&comm, OUT_B, 0);
+NXT::Motor::Stop(&comm, OUT_C, 0);
+if (znalazlem==1) break;
+ 
+//szukaj w prawo
+inny_licznik=0;
+NXT::Motor::SetReverse(&comm, OUT_B, y);
+NXT::Motor::SetForward(&comm, OUT_C, y);
+while(1){
+ if ((NXT::Sensor::GetValue(&comm,IN_3) <37)) { inny_licznik=0; znalazlem=1; break;}  // 37 - granica czarne-biale
+Wait(10);
+if (++inny_licznik>40) break;
+}
+ 
+ 
+NXT::Motor::SetForward(&comm, OUT_B, 0);
+NXT::Motor::SetForward(&comm, OUT_C, 0);
+NXT::Motor::Stop(&comm, OUT_B, 0);
+NXT::Motor::Stop(&comm, OUT_C, 0);
+ 
+if (znalazlem==1) break;
+}
+cout <<"ddd\n";
+}
+ 
+ 
+NXT::Sensor::SetLight(&comm,IN_3, 0) ;
+}
+ 
+ 
+ }
